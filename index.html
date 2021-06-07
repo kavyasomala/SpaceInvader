@@ -67,7 +67,7 @@ addLevel([
 ], {
   width: 30,
   height: 22,
-  '^' : [sprite('space-invader'), scale(2)],
+  '^' : [sprite('space-invader'), scale(2), 'space-invader'],
   '!' : [ sprite('wall'), 'left-wall'],
   '&' : [sprite('wall'), 'right-wall']
 })
@@ -113,6 +113,21 @@ timer.action(() => {
   if (timer.time <=0 ) {
     go('lose', score.value)
   }
+})
+
+const INVADER_SPEED = 100
+let CURRENT_SPEED = INVADER_SPEED
+const LEVEL_DOWN = 50
+
+action('space-invader', (s) => {
+  s.move(INVADER_SPEED, 0)
+})
+
+collides('space-invader', 'right-wall', () => {
+  CURRENT_SPEED = -INVADER_SPEED
+  every('space-invader', (s) => {
+    s.move(0, LEVEL_DOWN)
+  })
 })
 });
 start("main");
