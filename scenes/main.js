@@ -1,4 +1,7 @@
 const MOVE_SPEED = 200
+const TIME_LEFT = 200 //change later
+
+layer(['obj', 'ui'], 'obj')
 
 addLevel([
   '!^^^^^^^^^^^^    &',
@@ -33,4 +36,32 @@ keyDown('left', () => {
 
 keyDown('right', () => {
   player.move(MOVE_SPEED, 0)
+})
+
+const score = add([
+  text('0'),
+  pos(50, 50),
+  layer('ui'),
+  scale(3),
+  {
+    value: 0,
+  }
+])
+
+const timer = add([
+  text('0'),
+  pos(90, 50),
+  scale(2),
+  layer('ui'),
+  {
+    time: TIME_LEFT,
+  },
+])
+
+timer.action(() => {
+  timer.time -= dt()
+  timer.text = timer.time.toFixed(2)
+  if (timer.time <=0 ) {
+    go('lose', score.value)
+  }
 })
