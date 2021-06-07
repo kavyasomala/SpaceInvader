@@ -1,5 +1,10 @@
+
 const MOVE_SPEED = 200
 const TIME_LEFT = 200 //change later
+const INVADER_SPEED = 100
+let CURRENT_SPEED = INVADER_SPEED
+const LEVEL_DOWN = 100
+
 
 layer(['obj', 'ui'], 'obj')
 
@@ -14,19 +19,27 @@ addLevel([
   '!                &',
   '!                &',
   '!                &',
-  '!                &'
+  '!                &',
+  '!                &',
+  '!                &',
+  '!                &',
+  '!                &',
+  '!                &',
+  '!                &',
+  '!                &',
+  '!                &',
 ], {
-  width: 30,
-  height: 22,
-  '^' : [sprite('space-invader'), scale(2), 'space-invader'],
-  '!' : [ sprite('wall'), 'left-wall'],
-  '&' : [sprite('wall'), 'right-wall']
-})
+    width: 35,
+    height: 20,
+    '^': [sprite('space-invader'), scale(2), 'space-invader'],
+    '!': [sprite('wall'), 'left-wall'],
+    '&': [sprite('wall'), 'right-wall']
+  })
 
-const player = add ([
+const player = add([
   sprite('space-ship'),
   scale(2),
-  pos(width()/2, height()/2),
+  pos(width() / 2, height() - height() / 4),
   origin('center')
 ])
 
@@ -61,17 +74,13 @@ const timer = add([
 timer.action(() => {
   timer.time -= dt()
   timer.text = timer.time.toFixed(2)
-  if (timer.time <=0 ) {
+  if (timer.time <= 0) {
     go('lose', score.value)
   }
 })
 
-const INVADER_SPEED = 100
-let CURRENT_SPEED = INVADER_SPEED
-const LEVEL_DOWN = 50
-
 action('space-invader', (s) => {
-  s.move(INVADER_SPEED, 0)
+  s.move(CURRENT_SPEED, 0)
 })
 
 collides('space-invader', 'right-wall', () => {
@@ -79,4 +88,21 @@ collides('space-invader', 'right-wall', () => {
   every('space-invader', (s) => {
     s.move(0, LEVEL_DOWN)
   })
+})
+
+collides('space-invader', 'left-wall', () => {
+  CURRENT_SPEED = INVADER_SPEED
+  every('space-invader', (s) => {
+    s.move(0, LEVEL_DOWN)
+  })
+})
+
+player.overlaps('space-invader', () =>
+  go('lose', {score: score.value})
+)
+
+action('space-invader', (s) => {
+  if(s.pos.y >= (height() - height()/4)){
+      go('lose', {score: score.value})
+  }
 })
